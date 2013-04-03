@@ -1,36 +1,39 @@
 <?php
 
-// error_reporting(E_STRICT);
-error_reporting(E_ALL);
-
-require_once 'PHPUnit/Framework.php';
-
-require_once "lib/couch.php";
-require_once "lib/couchClient.php";
-require_once "lib/couchDocument.php";
-require_once "lib/couchReplicator.php";
-
-
 class couchClientListTest extends PHPUnit_Framework_TestCase
 {
 
+	/**
+	 * @var $client couchClient
+	 */
+	private $client = null;
+
+	/**
+	 * @var $couch_server string
+	 */
 	private $couch_server = "http://localhost:5984/";
 
-    public function setUp()
-    {
-        $this->client = new couchClient($this->couch_server,"couchclienttest");
+	public function setUp()
+	{
+		parent::setUp();
+
+		$this->client = new couchClient($this->couch_server,"couchclienttest");
 		try {
 			$this->client->deleteDatabase();
 		} catch ( Exception $e) {}
 		$this->client->createDatabase();
-    }
+	}
 
 	public function tearDown()
-    {
-        $this->client = null;
-    }
+	{
+		parent::tearDown();
 
+		$this->client = null;
+	}
 
+	/**
+	 * @group couchClientList
+	 */
 	public function testList () {
 		$doc = new couchDocument($this->client);
 		$doc->_id="_design/test";
@@ -77,31 +80,31 @@ class couchClientListTest extends PHPUnit_Framework_TestCase
 			array('_id'=>'third','type'=>'test','param'=>'hello3')
 		);
 		$this->client->storeDocs($docs);
- 		$test = $this->client->getList('test','list1','simple');
-		$this->assertType("array", $test);
+		$test = $this->client->getList('test','list1','simple');
+		$this->assertInternalType("array", $test);
 		$this->assertEquals(count($test), 3);
 		foreach( $test as $row ) {
-			$this->assertType("object", $row);
+			$this->assertInternalType("object", $row);
 			$this->assertObjectHasAttribute('id',$row);
 			$this->assertObjectHasAttribute('key',$row);
 			$this->assertObjectHasAttribute('value',$row);
 		}
 
 		$test = $this->client->startkey( array('test') )->endkey( array('test', array()) )->getList('test','list1','simple');
-		$this->assertType("array", $test);
+		$this->assertInternalType("array", $test);
 		$this->assertEquals(count($test), 2);
 		foreach( $test as $row ) {
-			$this->assertType("object", $row);
+			$this->assertInternalType("object", $row);
 			$this->assertObjectHasAttribute('id',$row);
 			$this->assertObjectHasAttribute('key',$row);
 			$this->assertObjectHasAttribute('value',$row);
 		}
 
 		$test = $this->client->startkey( array('test2') )->endkey( array('test2', array()) )->getForeignList('test2','list2','test','simple');
-		$this->assertType("array", $test);
+		$this->assertInternalType("array", $test);
 		$this->assertEquals(count($test), 1);
 		foreach( $test as $row ) {
-			$this->assertType("object", $row);
+			$this->assertInternalType("object", $row);
 			$this->assertObjectHasAttribute('id',$row);
 			$this->assertObjectHasAttribute('key',$row);
 			$this->assertObjectHasAttribute('value',$row);
@@ -109,29 +112,27 @@ class couchClientListTest extends PHPUnit_Framework_TestCase
 		}
 
 		$test = $this->client
-						->startkey( array('test2') )
-						->endkey( array('test2', array()) )
-						->include_docs(TRUE)
-						->getForeignList('test2','list2','test','simple');
-		$this->assertType("array", $test);
+			->startkey( array('test2') )
+			->endkey( array('test2', array()) )
+			->include_docs(TRUE)
+			->getForeignList('test2','list2','test','simple');
+		$this->assertInternalType("array", $test);
 		$this->assertEquals(count($test), 1);
 		foreach( $test as $row ) {
-			$this->assertType("object", $row);
+			$this->assertInternalType("object", $row);
 			$this->assertObjectHasAttribute('id',$row);
 			$this->assertObjectHasAttribute('key',$row);
 			$this->assertObjectHasAttribute('value',$row);
 			$this->assertObjectHasAttribute('doc',$row);
-			$this->assertType("object", $row->doc);
+			$this->assertInternalType("object", $row->doc);
 			$this->assertObjectHasAttribute('_id',$row->doc);
 			$this->assertObjectHasAttribute('_rev',$row->doc);
 			$this->assertEquals($row->value,'test2');
 		}
-
 // 		print_r($test);
-		
-// 		$this->assertType("object", $test);
+
+// 		$this->assertInternalType("object", $test);
 // 		$this->assertObjectHasAttribute("doc",$test);
 // 		$this->assertObjectHasAttribute("query_length",$test);
 	}
-
 }

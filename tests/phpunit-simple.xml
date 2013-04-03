@@ -1,0 +1,28 @@
+<phpunit bootstrap="bootstrap.php"
+		colors="false"
+		testdox="true"
+		convertErrorsToExceptions="true"
+		convertNoticesToExceptions="true"
+		convertWarningsToExceptions="true"
+		stopOnFailure="false"
+		syntaxCheck="true"
+		verbose="false">
+
+	<testsuites>
+		<testsuite name="couchClientLib">
+			<directory>./lib</directory>
+		</testsuite>
+	</testsuites>
+
+	<!-- including and excluding files for code coverage -->
+	<filter>
+		<!-- undocumanted parameter addUncoveredFilesFromWhitelist. Why is it important?
+		  -  The reason is that phpunit only considers file which were used by one of your
+		  -  tests. The other ones will be ignored.
+		-->
+		<whitelist addUncoveredFilesFromWhitelist="true">
+			<!-- list directories and file types to included here -->
+			<directory suffix=".php">../lib/</directory>
+		</whitelist>
+	</filter>
+</phpunit>

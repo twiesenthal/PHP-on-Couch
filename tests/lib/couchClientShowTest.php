@@ -1,36 +1,38 @@
 <?php
 
-// error_reporting(E_STRICT);
-error_reporting(E_ALL);
-
-require_once 'PHPUnit/Framework.php';
-
-require_once "lib/couch.php";
-require_once "lib/couchClient.php";
-require_once "lib/couchDocument.php";
-require_once "lib/couchReplicator.php";
-
-
 class couchClientShowTest extends PHPUnit_Framework_TestCase
 {
 
+	/**
+	 * @var $couch_server string
+	 */
 	private $couch_server = "http://localhost:5984/";
+	/**
+	 * @var $client couchClient
+	 */
+	private $client = null;
 
-    public function setUp()
-    {
-        $this->client = new couchClient($this->couch_server,"couchclienttest");
+	public function setUp()
+	{
+		parent::setUp();
+
+		$this->client = new couchClient($this->couch_server,"couchclienttest");
 		try {
 			$this->client->deleteDatabase();
 		} catch ( Exception $e) {}
 		$this->client->createDatabase();
-    }
+	}
 
 	public function tearDown()
-    {
-        $this->client = null;
-    }
+	{
+		parent::tearDown();
 
+		$this->client = null;
+	}
 
+	/**
+	 * @group couchClientList
+	 */
 	public function testShow () {
 		$doc = new couchDocument($this->client);
 		$doc->_id="_design/test";
@@ -76,9 +78,8 @@ class couchClientShowTest extends PHPUnit_Framework_TestCase
 		$test = $this->client->getShow("test","simple",null,array("param1"=>"value1"));
 		$this->assertEquals ( $test, "no document 1" );
 		$test = $this->client->getShow("test","json",null);
-		$this->assertType("object", $test);
+		$this->assertInternalType("object", $test);
 		$this->assertObjectHasAttribute("doc",$test);
 		$this->assertObjectHasAttribute("query_length",$test);
 	}
-
 }

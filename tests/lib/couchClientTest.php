@@ -1,35 +1,38 @@
 <?php
 
-// error_reporting(E_STRICT);
-error_reporting(E_ALL);
-
-require_once 'PHPUnit/Framework.php';
-
-require_once "lib/couch.php";
-require_once "lib/couchClient.php";
-require_once "lib/couchDocument.php";
-require_once "lib/couchReplicator.php";
-
-
 class couchClientTest extends PHPUnit_Framework_TestCase
 {
 
+	/**
+	 * @var $couch_server string
+	 */
 	private $couch_server = "http://localhost:5984/";
+	/**
+	 * @var $client couchClient
+	 */
+	private $client  = null;
 
-    public function setUp()
-    {
-        $this->client = new couchClient($this->couch_server,"couchclienttest");
+	public function setUp()
+	{
+		parent::setUp();
+
+		$this->client = new couchClient($this->couch_server,"couchclienttest");
 		try {
 			$this->client->deleteDatabase();
 		} catch ( Exception $e) {}
 		$this->client->createDatabase();
-    }
+	}
 
 	public function tearDown()
-    {
-        $this->client = null;
-    }
+	{
+		parent::tearDown();
 
+		$this->client = null;
+	}
+
+	/**
+	 * @group couchClient
+	 */
 	public function testDatabaseNameValidator () {
 		$matches = array (
 			"Azerty"=>false,
@@ -40,9 +43,11 @@ class couchClientTest extends PHPUnit_Framework_TestCase
 		foreach ( $matches as $key => $val ) {
 			$this->assertEquals ( $val, couchClient::isValidDatabaseName($key) );
 		}
-
 	}
 
+	/**
+	 * @group couchClient
+	 */
 	public function testDatabaseExists () {
 		$exist = $this->client->databaseExists();
 		$this->assertTrue($exist,"testing against an existing database");
@@ -52,10 +57,13 @@ class couchClientTest extends PHPUnit_Framework_TestCase
 
 	}
 
+	/**
+	 * @group couchClient
+	 */
 	public function testDatabaseInfos () {
 		$infos = $this->client->getDatabaseInfos();
 // 		print_r($infos);
-		$this->assertType("object", $infos);
+		$this->assertInternalType("object", $infos);
 		$tsts = array(
 			'db_name' => "couchclienttest",
 			"doc_count" => 0,
@@ -75,37 +83,51 @@ class couchClientTest extends PHPUnit_Framework_TestCase
 		}
 	}
 
+	/**
+	 * @group couchClient
+	 */
 	public function testDatabaseDelete () {
 		$back = $this->client->deleteDatabase();
-		$this->assertType("object", $back);
+		$this->assertInternalType("object", $back);
 		$this->assertObjectHasAttribute("ok",$back);
 		$this->assertEquals(true,$back->ok);
 // 		print_r($back);
 	}
 
+	/**
+	 * @group couchClient
+	 */
 	public function testGetDatabaseUri () {
 		$this->assertEquals ( $this->couch_server."couchclienttest", $this->client->getDatabaseUri() );
 	}
 
+	/**
+	 * @group couchClient
+	 */
 	public function testGetDatabaseName () {
 		$this->assertEquals ( "couchclienttest", $this->client->getDatabaseName() );
 	}
 
+	/**
+	 * @group couchClient
+	 */
 	public function testGetServerUri () {
 		$this->assertEquals ( $this->couch_server."couchclienttest", $this->client->getDatabaseUri() );
 	}
 
 	/**
-	* @expectedException InvalidArgumentException
-	*/
+	 * @group couchClient
+	 * @expectedException InvalidArgumentException
+	 */
 	public function testStoreDocException () {
 		$test = array ("_id"=>"great","type"=> "array");
 		$this->client->storeDoc($test);
 	}
 
 	/**
-	* @expectedException InvalidArgumentException
-	*/
+	 * @group couchClient
+	 * @expectedException InvalidArgumentException
+	 */
 	public function testStoreDocException2 () {
 		$test = new stdclass();
 		$test->_id = "great";
@@ -113,6 +135,9 @@ class couchClientTest extends PHPUnit_Framework_TestCase
 		$this->client->storeDoc($test);
 	}
 
+	/**
+	 * @group couchClient
+	 */
 	public function testStoreDoc () {
 		$infos = $this->client->getDatabaseInfos();
 		$test = new stdclass();
@@ -122,11 +147,14 @@ class couchClientTest extends PHPUnit_Framework_TestCase
 		$infos2 = $this->client->getDatabaseInfos();
 		$this->assertEquals ( $infos->doc_count+1, $infos2->doc_count );
 		$doc = $this->client->getDoc("great");
-		$this->assertType("object", $doc);
+		$this->assertInternalType("object", $doc);
 		$this->assertObjectHasAttribute("type",$doc);
 		$this->assertEquals("object",$doc->type);
 	}
 
+	/**
+	 * @group couchClient
+	 */
 	public function testBulkDocsStorage () {
 		$data = array (
 			new stdclass(),
@@ -154,18 +182,18 @@ class couchClientTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals ( $infos->doc_count, 4 );
 
 		$doc = $this->client->conflicts()->getDoc("test");
-		$this->assertType("object", $doc);
+		$this->assertInternalType("object", $doc);
 		$this->assertObjectHasAttribute("_conflicts",$doc);
-		$this->assertType("array",$doc->_conflicts);
+		$this->assertInternalType("array",$doc->_conflicts);
 		$this->assertEquals( count( $doc->_conflicts ) , 2 );
 		$data[0]->_id = "test2";
 		$data[1]->_id = "test2";
 		$data[2]->_id = "test2";
 		$stored = $this->client->storeDocs($data,false);
-		$this->assertType("array",$stored);
+		$this->assertInternalType("array",$stored);
 		$this->assertEquals( count($stored) , 3 );
 		foreach ( $stored as $s ) {
-			$this->assertType("object",$s);
+			$this->assertInternalType("object",$s);
 			$this->assertObjectHasAttribute("error",$s);
 			$this->assertEquals($s->error, "conflict");
 		}
@@ -174,6 +202,9 @@ class couchClientTest extends PHPUnit_Framework_TestCase
 // 		print_r($stored);
 	}
 
+	/**
+	 * @group couchClient
+	 */
 	public function testcompactAllViews () {
 		$cd = new couchDocument($this->client);
 		$cd->set ( array (
@@ -183,6 +214,9 @@ class couchClientTest extends PHPUnit_Framework_TestCase
 		$this->client->compactAllViews();
 	}
 
+	/**
+	 * @group couchClient
+	 */
 	public function testCouchDocumentAttachment () {
 		$cd = new couchDocument($this->client);
 		$cd->set ( array (
@@ -190,8 +224,8 @@ class couchClientTest extends PHPUnit_Framework_TestCase
 		) );
 		$back = $cd->storeAsAttachment("This is the content","file.txt","text/plain");
 		$fields = $cd->getFields();
-		
-		$this->assertType("object", $back);
+
+		$this->assertInternalType("object", $back);
 		$this->assertObjectHasAttribute("ok",$back);
 		$this->assertEquals( $back->ok , true );
 		$this->assertObjectHasAttribute("_attachments",$fields);
@@ -203,8 +237,8 @@ class couchClientTest extends PHPUnit_Framework_TestCase
 		) );
 		$back = $cd->storeAttachment("lib/couch.php","text/plain","file.txt");
 		$fields = $cd->getFields();
-		
-		$this->assertType("object", $back);
+
+		$this->assertInternalType("object", $back);
 		$this->assertObjectHasAttribute("ok",$back);
 		$this->assertEquals( $back->ok , true );
 		$this->assertObjectHasAttribute("_attachments",$fields);
@@ -212,7 +246,7 @@ class couchClientTest extends PHPUnit_Framework_TestCase
 
 		$back = $cd->deleteAttachment("file.txt");
 		$fields = $cd->getFields();
-		$this->assertType("object", $back);
+		$this->assertInternalType("object", $back);
 		$this->assertObjectHasAttribute("ok",$back);
 		$this->assertEquals( $back->ok , true );
 		$test = property_exists($fields,'_attachments');
@@ -220,6 +254,9 @@ class couchClientTest extends PHPUnit_Framework_TestCase
 // 		$this->assertObjectHasAttribute("file.txt",$fields->_attachments);
 	}
 
+	/**
+	 * @group couchClient
+	 */
 	public function testRevs () {
 		$cd = new couchDocument($this->client);
 		$cd->set ( array (
@@ -235,6 +272,9 @@ class couchClientTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals( count($doc->_revs_info) , 3 );
 	}
 
+	/**
+	 * @group couchClient
+	 */
 	public function testBulkDocsStorageAllOrNothing () {
 		$data = array (
 			new stdclass(),
@@ -271,7 +311,9 @@ class couchClientTest extends PHPUnit_Framework_TestCase
 		$this->assertObjectNotHasAttribute("_conflicts",$doc);
 	}
 
-
+	/**
+	 * @group couchClient
+	 */
 	public function testDocAsArray () {
 		$infos = $this->client->getDatabaseInfos();
 		$test = new stdclass();
@@ -281,7 +323,7 @@ class couchClientTest extends PHPUnit_Framework_TestCase
 		$infos2 = $this->client->getDatabaseInfos();
 		$this->assertEquals ( $infos->doc_count+1, $infos2->doc_count );
 		$doc = $this->client->asArray()->getDoc("great");
-		$this->assertType("array", $doc);
+		$this->assertInternalType("array", $doc);
 		$this->assertArrayHasKey("type",$doc);
 		$this->assertEquals("object",$doc['type']);
 	}

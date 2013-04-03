@@ -523,7 +523,7 @@ class couch {
 	*
 	* @param string $method HTTP method to use (GET, POST, ...)
 	* @param string $url URL to fetch
-	* @param array $parameters additionnal parameters to send with the request
+	* @param array $parameters additional parameters to send with the request
 	* @param string|array|object $data request body
 	* @param string $content_type the content type of the sent data (defaults to application/json)
 	*

@@ -591,8 +591,7 @@ class couchClient extends couch {
 				$contentType = "application/x-www-form-urlencoded";
 			}
 		}
-
-                return $this->_queryAndTest ($method, $url, array(200,201,202),$params,$data,$contentType);
+		return $this->_queryAndTest ($method, $url, array(200,201,202),$params,$data,$contentType);
 	}
 
 	/**
