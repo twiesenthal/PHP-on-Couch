@@ -1,12 +1,12 @@
 <phpunit bootstrap="bootstrap.php"
-		colors="false"
+		colors="true"
 		testdox="true"
 		convertErrorsToExceptions="true"
 		convertNoticesToExceptions="true"
 		convertWarningsToExceptions="true"
 		stopOnFailure="false"
 		syntaxCheck="true"
-		verbose="false">
+		verbose="true">
 
 	<testsuites>
 		<testsuite name="couchClientLib">
@@ -25,4 +25,24 @@
 			<directory suffix=".php">../lib/</directory>
 		</whitelist>
 	</filter>
+
+	<logging>
+		<log
+			type="coverage-html"
+			target="../build/coverage"
+			charset="UTF-8"
+			yui="true"
+			lowUpperBound="35"
+			highLowerBound="70"
+		/>
+		<log
+			type="coverage-clover"
+			target="../build/logs/clover.xml"
+		/>
+		<log
+			type="junit"
+			target="../build/logs/junit.xml"
+			logIncompleteSkipped="false"
+		/>
+	</logging>
 </phpunit>
