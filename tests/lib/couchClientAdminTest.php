@@ -37,7 +37,6 @@ class couchClientAdminTest extends CouchClientTestCase
 
 	/**
 	 * @group couchAdmin
-	 * @group actual
 	 */
 	public function testCreateAdmin () {
 		$authorizedAdmin = new couchAdmin($this->client);
@@ -51,7 +50,6 @@ class couchClientAdminTest extends CouchClientTestCase
 	 * the thrown exception can't be caught by @expectedException
 	 * because we need to remove the admin user after the exception is thrown
 	 * @group couchAdmin
-	 * @group actual
 	 */
 	public function testCreateDatabaseFailsIfAdminIsSet () {
 		$this->_createInitialAdminUser();
@@ -67,7 +65,6 @@ class couchClientAdminTest extends CouchClientTestCase
 
 	/**
 	 * @group couchAdmin
-	 * @group actual
 	 */
 	public function testAdminCanCreateAndDeleteADatabase () {
 		$this->_createInitialAdminUser();
@@ -97,7 +94,6 @@ class couchClientAdminTest extends CouchClientTestCase
 
 	/**
 	 * @group couchAdmin
-	 * @group actual
 	 */
 	public function testCreateDeleteUserAccount () {
 		$this->_createInitialAdminUser();
@@ -120,7 +116,6 @@ class couchClientAdminTest extends CouchClientTestCase
 
 	/**
 	 * @group couchAdmin
-	 * @group actual
 	 */
 	public function testAllUsers () {
 		$this->_createInitialAdminUser();
@@ -141,7 +136,6 @@ class couchClientAdminTest extends CouchClientTestCase
 
 	/**
 	 * @group couchAdmin
-	 * @group actual
 	 */
 	public function testGetUser () {
 		//create some users
@@ -164,7 +158,6 @@ class couchClientAdminTest extends CouchClientTestCase
 
 	/**
 	 * @group couchAdmin
-	 * @group actual
 	 */
 	public function testUserAccountWithRole () {
 		$roles = array("badboys","jailbreakers");
@@ -199,7 +192,6 @@ class couchClientAdminTest extends CouchClientTestCase
 
 	/**
 	 * @group couchAdmin
-	 * @group actual
 	 */
 	public function testGetSecurity () {
 		// create an admin user which will be "gabage collected" in tearDown()
@@ -224,7 +216,6 @@ class couchClientAdminTest extends CouchClientTestCase
 
 	/**
 	 * @group couchAdmin
-	 * @group actual
 	 */
 	public function testSetSecurity () {
 		// create an admin user which will be "gabage collected" in tearDown()
@@ -254,7 +245,6 @@ class couchClientAdminTest extends CouchClientTestCase
 
 	/**
 	 * @group couchAdmin
-	 * @group actual
 	 */
 	public function testDatabaseAdminUser () {
 		// create an admin user which will be "gabage collected" in tearDown()
@@ -285,7 +275,6 @@ class couchClientAdminTest extends CouchClientTestCase
 
 	/**
 	 * @group couchAdmin
-	 * @group actual
 	 */
 	public function testDatabaseReaderUser () {
 		// create an admin user which will be "gabage collected" in tearDown()
@@ -318,7 +307,6 @@ class couchClientAdminTest extends CouchClientTestCase
 
 	/**
 	 * @group couchAdmin
-	 * @group actual
 	 */
 	public function testGetDatabaseAdminUsers () {
 		// create an admin user which will be "gabage collected" in tearDown()
@@ -344,7 +332,6 @@ class couchClientAdminTest extends CouchClientTestCase
 
 	/**
 	 * @group couchAdmin
-	 * @group actual
 	 */
 	public function testGetDatabaseReaderUsers () {
 		// create an admin user which will be "gabage collected" in tearDown()
@@ -370,7 +357,6 @@ class couchClientAdminTest extends CouchClientTestCase
 	/**
 	 * @group couchAdmin
 	 * @group couchAdminRoles
-	 * @group actual
 	 */
 	public function testDatabaseAdminRole () {
 		// create an admin user which will be "gabage collected" in tearDown()
@@ -408,7 +394,6 @@ class couchClientAdminTest extends CouchClientTestCase
 	/**
 	 * @group couchAdmin
 	 * @group couchAdminRoles
-	 * @group actual
 	 */
 	public function testDatabaseReaderRole () {
 		// create an admin user which will be "gabage collected" in tearDown()
@@ -446,7 +431,6 @@ class couchClientAdminTest extends CouchClientTestCase
 	/**
 	 * @group couchAdmin
 	 * @group couchAdminRoles
-	 * @group actual
 	 */
 	public function testGetDatabaseAdminRoles () {
 		// create an admin user which will be "gabage collected" in tearDown()
@@ -469,7 +453,7 @@ class couchClientAdminTest extends CouchClientTestCase
 	/**
 	 * @group couchAdmin
 	 * @group couchAdminRoles
-	 * @group actual
+
 	 */
 	public function testGetDatabaseReaderRoles () {
 		// create an admin user which will be "gabage collected" in tearDown()
@@ -492,7 +476,6 @@ class couchClientAdminTest extends CouchClientTestCase
 	/**
 	 * @group couchAdmin
 	 * @group couchAdminRoles
-	 * @group actual
 	 */
 	public function testUserRoles () {
 		// create an admin user which will be "gabage collected" in tearDown()
@@ -574,7 +557,6 @@ class couchClientAdminTest extends CouchClientTestCase
 
 	/**
 	 * @group couchAdmin
-	 * @group actual
 	 */
 	public function testDeleteUser() {
 		$this->_createInitialAdminUser();
@@ -603,7 +585,6 @@ class couchClientAdminTest extends CouchClientTestCase
 
 	/**
 	 * @group couchAdmin
-	 * @group actual
 	 */
 	public function testDeleteAdmin() {
 		// create an admin user which will be "gabage collected" in tearDown()
@@ -616,7 +597,6 @@ class couchClientAdminTest extends CouchClientTestCase
 
 	/**
 	 * @group couchAdmin
-	 * @group actual
 	 */
 	public function testUsersDatabaseName () {
 		$adm = new couchAdmin($this->adminClient,array("users_database"=>"test"));
