@@ -629,6 +629,5 @@ class couch {
 		curl_close($http);
 		return $response;
 	}
-
 }
 

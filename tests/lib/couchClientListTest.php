@@ -1,34 +1,14 @@
 <?php
 
-class couchClientListTest extends PHPUnit_Framework_TestCase
+class couchClientListTest extends CouchClientTestCase
 {
-
-	/**
-	 * @var $client couchClient
-	 */
-	private $client = null;
-
-	/**
-	 * @var $couch_server string
-	 */
-	private $couch_server = "http://localhost:5984/";
-
 	public function setUp()
 	{
 		parent::setUp();
-
-		$this->client = new couchClient($this->couch_server,"couchclienttest");
 		try {
 			$this->client->deleteDatabase();
 		} catch ( Exception $e) {}
 		$this->client->createDatabase();
-	}
-
-	public function tearDown()
-	{
-		parent::tearDown();
-
-		$this->client = null;
 	}
 
 	/**

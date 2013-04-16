@@ -1,33 +1,14 @@
 <?php
 
-class couchClientTest extends PHPUnit_Framework_TestCase
+class couchClientTest extends CouchClientTestCase
 {
-
-	/**
-	 * @var $couch_server string
-	 */
-	private $couch_server = "http://localhost:5984/";
-	/**
-	 * @var $client couchClient
-	 */
-	private $client  = null;
-
 	public function setUp()
 	{
 		parent::setUp();
-
-		$this->client = new couchClient($this->couch_server,"couchclienttest");
 		try {
 			$this->client->deleteDatabase();
 		} catch ( Exception $e) {}
 		$this->client->createDatabase();
-	}
-
-	public function tearDown()
-	{
-		parent::tearDown();
-
-		$this->client = null;
 	}
 
 	/**
@@ -52,7 +33,7 @@ class couchClientTest extends PHPUnit_Framework_TestCase
 		$exist = $this->client->databaseExists();
 		$this->assertTrue($exist,"testing against an existing database");
 
-		$client = new couchClient($this->couch_server,"foofoofooidontexist");
+		$client = new couchClient($this->_getConnectionString(),"foofoofooidontexist");
 		$this->assertFalse($client->databaseExists(),"testing against a non-existing database");
 
 	}
@@ -65,7 +46,7 @@ class couchClientTest extends PHPUnit_Framework_TestCase
 // 		print_r($infos);
 		$this->assertInternalType("object", $infos);
 		$tsts = array(
-			'db_name' => "couchclienttest",
+			'db_name' => static::$test_database_name,
 			"doc_count" => 0,
 			"doc_del_count" => 0,
 			"update_seq" => 0,
@@ -98,21 +79,21 @@ class couchClientTest extends PHPUnit_Framework_TestCase
 	 * @group couchClient
 	 */
 	public function testGetDatabaseUri () {
-		$this->assertEquals ( $this->couch_server."couchclienttest", $this->client->getDatabaseUri() );
+		$this->assertEquals ( $this->_getConnectionString().static::$test_database_name, $this->client->getDatabaseUri() );
 	}
 
 	/**
 	 * @group couchClient
 	 */
 	public function testGetDatabaseName () {
-		$this->assertEquals ( "couchclienttest", $this->client->getDatabaseName() );
+		$this->assertEquals ( static::$test_database_name, $this->client->getDatabaseName() );
 	}
 
 	/**
 	 * @group couchClient
 	 */
 	public function testGetServerUri () {
-		$this->assertEquals ( $this->couch_server."couchclienttest", $this->client->getDatabaseUri() );
+		$this->assertEquals ( $this->_getConnectionString().static::$test_database_name, $this->client->getDatabaseUri() );
 	}
 
 	/**
@@ -326,5 +307,10 @@ class couchClientTest extends PHPUnit_Framework_TestCase
 		$this->assertInternalType("array", $doc);
 		$this->assertArrayHasKey("type",$doc);
 		$this->assertEquals("object",$doc['type']);
+	}
+
+	private function _getConnectionString()
+	{
+		return static::$couch_server['scheme'] . static::$couch_server['hostname'] . ':' . static::$couch_server['port'] . '/';
 	}
 }

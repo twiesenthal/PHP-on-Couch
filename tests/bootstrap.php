@@ -4,6 +4,7 @@
 
 	require_once('PHPUnit/Autoload.php');
 
+	require_once (__DIR__ . "/CouchClientTestCase.php");
 	require_once (__DIR__ . "/../lib/couch.php");
 	require_once (__DIR__ . "/../lib/couchClient.php");
 	require_once (__DIR__ . "/../lib/couchDocument.php");

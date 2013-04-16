@@ -1,17 +1,7 @@
 <?php
 
-class couchClientTestUpdateDocTest extends PHPUnit_Framework_TestCase
+class couchClientTestUpdateDocTest extends CouchClientTestCase
 {
-
-	/**
-	 * @var $couch_server string
-	 */
-	private $couch_server = "http://localhost:5984/";
-	/**
-	 * @var $client couchClient
-	 */
-	private $client = null;
-
 	/**
 	 * @var $updateFn string
 	 */
@@ -32,12 +22,9 @@ function(doc,req) {
 EOT
 	;
 
-
 	public function setUp()
 	{
 		parent::setUp();
-
-		$this->client = new couchClient($this->couch_server,"couchclienttest");
 		try {
 			$this->client->deleteDatabase();
 		} catch ( Exception $e) {}
@@ -50,13 +37,6 @@ EOT
 		$doc = new stdClass();
 		$doc->_id = "foo";
 		$this->client->storeDoc($doc);
-	}
-
-	public function tearDown()
-	{
-		parent::tearDown();
-
-		$this->client = null;
 	}
 
 	/**

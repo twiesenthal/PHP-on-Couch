@@ -860,11 +860,11 @@ class couchClient extends couch {
 	* @param string $name list name
 	* @param string $view_id the name of the design document containing the view (without _design)
 	* @param string $view_name view name
-	* @param array $additionnal_parameters some other parameters to send in the query
+	* @param array $additional_parameters some other parameters to send in the query
 	* @return object CouchDB list query response
 	* @throws InvalidArgumentException
 	*/
-	public function getForeignList ( $id, $name, $view_id, $view_name, $additionnal_parameters = array() ) {
+	public function getForeignList ( $id, $name, $view_id, $view_name, $additional_parameters = array() ) {
 		if ( !$id OR !$name )    throw new InvalidArgumentException("You should specify list id and name");
 		if ( !$view_id OR !$view_name )    throw new InvalidArgumentException("You should specify view id and view name");
 		$url = '/'.urlencode($this->dbname).
@@ -873,8 +873,8 @@ class couchClient extends couch {
 		$this->results_as_cd = false;
 		list($method, $view_query, $data) = $this->_prepare_view_query();
 
-		if ( is_array($additionnal_parameters) && count($additionnal_parameters) ) {
-			$view_query = array_merge($additionnal_parameters,$view_query);
+		if ( is_array($additional_parameters) && count($additional_parameters) ) {
+			$view_query = array_merge($additional_parameters,$view_query);
 		}
 		return $this->_queryAndTest ($method, $url, array(200),$view_query,$data);
 	}
@@ -886,15 +886,15 @@ class couchClient extends couch {
 	* @param string $id design document name (without _design)
 	* @param string $name show name
 	* @param string $doc_id id of the couchDB document (can be null !)
-	* @param array $additionnal_parameters some other parameters to send in the query
+	* @param array $additional_parameters some other parameters to send in the query
 	* @return object CouchDB list query response
 	* @throws InvalidArgumentException
 	*/
-	public function getShow ( $id, $name, $doc_id = null, $additionnal_parameters = array() ) {
+	public function getShow ( $id, $name, $doc_id = null, $additional_parameters = array() ) {
 		if ( !$id OR !$name )    throw new InvalidArgumentException("You should specify list id and name");
 		$url = '/'.urlencode($this->dbname).'/_design/'.urlencode($id).'/_show/'.urlencode($name);
 		if ( $doc_id )	$url.='/'.urlencode($doc_id);
-		return $this->_queryAndTest ('GET', $url, array(200), $additionnal_parameters);
+		return $this->_queryAndTest ('GET', $url, array(200), $additional_parameters);
 	}
 
     /**
