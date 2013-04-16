@@ -370,52 +370,98 @@ class couchClientAdminTest extends CouchClientTestCase
 	/**
 	 * @group couchAdmin
 	 * @group couchAdminRoles
+	 * @group actual
 	 */
 	public function testDatabaseAdminRole () {
-		$adm = new couchAdmin($this->adminClient);
-		$security = $adm->getSecurity();
-		$this->assertEquals(count($security->admins->roles),0);
-		$ok = $adm->addDatabaseAdminRole("cowboy");
-		$this->assertInternalType("boolean", $ok);
-		$this->assertEquals($ok,true);
-		$security = $adm->getSecurity();
-		$this->assertEquals(count($security->admins->roles),1);
-		$this->assertEquals(reset($security->admins->roles),"cowboy");
-		$ok = $adm->removeDatabaseAdminRole("cowboy");
-		$this->assertInternalType("boolean", $ok);
-		$this->assertEquals($ok,true);
-		$security = $adm->getSecurity();
-		$this->assertEquals(count($security->admins->roles),0);
+		// create an admin user which will be "gabage collected" in tearDown()
+		$this->_createInitialAdminUser();
+
+		$authorizedAdmin = new couchAdmin($this->adminClient);
+
+		// the database is needed for the test
+		$this->adminClient->createDatabase();
+
+		$securityBeforeRole = $authorizedAdmin->getSecurity();
+		$resultAddAdminRole = $authorizedAdmin->addDatabaseAdminRole("cowboy");
+		$securityAfterAddAdminRole = $authorizedAdmin->getSecurity();
+		$resultRemoveAdminRole = $authorizedAdmin->removeDatabaseAdminRole("cowboy");
+		$securityAfterRemoveAdminRole = $authorizedAdmin->getSecurity();
+
+		//we don't need the database anymore
+		$this->adminClient->deleteDatabase();
+
+		// make sure there are no roles at the beginning
+		$this->assertEquals(count($securityBeforeRole->admins->roles),0);
+
+		// check if role creation went well
+		$this->assertInternalType("boolean", $resultAddAdminRole);
+		$this->assertEquals($resultAddAdminRole,true);
+		$this->assertEquals(count($securityAfterAddAdminRole->admins->roles),1);
+		$this->assertEquals(reset($securityAfterAddAdminRole->admins->roles),"cowboy");
+
+		// check if role deletion went well
+		$this->assertInternalType("boolean", $resultRemoveAdminRole);
+		$this->assertEquals($resultRemoveAdminRole,true);
+		$this->assertEquals(count($securityAfterRemoveAdminRole->admins->roles),0);
 	}
 
 	/**
 	 * @group couchAdmin
 	 * @group couchAdminRoles
+	 * @group actual
 	 */
 	public function testDatabaseReaderRole () {
-		$adm = new couchAdmin($this->adminClient);
-		$security = $adm->getSecurity();
-		$this->assertEquals(count($security->readers->roles),0);
-		$ok = $adm->addDatabaseReaderRole("cowboy");
-		$this->assertInternalType("boolean", $ok);
-		$this->assertEquals($ok,true);
-		$security = $adm->getSecurity();
-		$this->assertEquals(count($security->readers->roles),1);
-		$this->assertEquals(reset($security->readers->roles),"cowboy");
-		$ok = $adm->removeDatabaseReaderRole("cowboy");
-		$this->assertInternalType("boolean", $ok);
-		$this->assertEquals($ok,true);
-		$security = $adm->getSecurity();
-		$this->assertEquals(count($security->readers->roles),0);
+		// create an admin user which will be "gabage collected" in tearDown()
+		$this->_createInitialAdminUser();
+
+		$authorizedAdmin = new couchAdmin($this->adminClient);
+
+		// the database is needed for the test
+		$this->adminClient->createDatabase();
+
+		$securityBeforeRole = $authorizedAdmin->getSecurity();
+		$resultAddReadRole = $authorizedAdmin->addDatabaseReaderRole("cowboy");
+		$securityAfterAddReadRole = $authorizedAdmin->getSecurity();
+		$resultRemoveReadRole = $authorizedAdmin->removeDatabaseReaderRole("cowboy");
+		$securityAfterRemoveReadRole = $authorizedAdmin->getSecurity();
+
+		//we don't need the database anymore
+		$this->adminClient->deleteDatabase();
+
+		// make sure there are no roles at the beginning
+		$this->assertEquals(count($securityBeforeRole->readers->roles),0);
+
+		// check if role creation went well
+		$this->assertInternalType("boolean", $resultAddReadRole);
+		$this->assertEquals($resultAddReadRole,true);
+		$this->assertEquals(count($securityAfterAddReadRole->readers->roles),1);
+		$this->assertEquals(reset($securityAfterAddReadRole->readers->roles),"cowboy");
+
+		// check if role deletion went well
+		$this->assertInternalType("boolean", $resultRemoveReadRole);
+		$this->assertEquals($resultRemoveReadRole,true);
+		$this->assertEquals(count($securityAfterRemoveReadRole->readers->roles),0);
 	}
 
 	/**
 	 * @group couchAdmin
 	 * @group couchAdminRoles
+	 * @group actual
 	 */
 	public function testGetDatabaseAdminRoles () {
-		$adm = new couchAdmin($this->adminClient);
-		$users = $adm->getDatabaseAdminRoles();
+		// create an admin user which will be "gabage collected" in tearDown()
+		$this->_createInitialAdminUser();
+
+		$authorizedAdmin = new couchAdmin($this->adminClient);
+
+		// the database is needed for the test
+		$this->adminClient->createDatabase();
+
+		$users = $authorizedAdmin->getDatabaseAdminRoles();
+
+		//we don't need the database anymore
+		$this->adminClient->deleteDatabase();
+
 		$this->assertInternalType("array", $users);
 		$this->assertEquals(0,count($users));
 	}
@@ -423,10 +469,22 @@ class couchClientAdminTest extends CouchClientTestCase
 	/**
 	 * @group couchAdmin
 	 * @group couchAdminRoles
+	 * @group actual
 	 */
 	public function testGetDatabaseReaderRoles () {
-		$adm = new couchAdmin($this->adminClient);
-		$users = $adm->getDatabaseReaderRoles();
+		// create an admin user which will be "gabage collected" in tearDown()
+		$this->_createInitialAdminUser();
+
+		$authorizedAdmin = new couchAdmin($this->adminClient);
+
+		// the database is needed for the test
+		$this->adminClient->createDatabase();
+
+		$users = $authorizedAdmin->getDatabaseReaderRoles();
+
+		//we don't need the database anymore
+		$this->adminClient->deleteDatabase();
+
 		$this->assertInternalType("array", $users);
 		$this->assertEquals(0,count($users));
 	}
@@ -434,47 +492,84 @@ class couchClientAdminTest extends CouchClientTestCase
 	/**
 	 * @group couchAdmin
 	 * @group couchAdminRoles
+	 * @group actual
 	 */
 	public function testUserRoles () {
-		$adm = new couchAdmin($this->adminClient);
-		$user = $adm->getUser("joe");
-		$this->assertInternalType("object", $user);
-		$this->assertObjectHasAttribute("_id",$user);
-		$this->assertObjectHasAttribute("roles",$user);
-		$this->assertInternalType("array", $user->roles);
-		$this->assertEquals(0,count($user->roles));
-		$adm->addRoleToUser($user,"cowboy");
-		$user = $adm->getUser("joe");
-		$this->assertInternalType("object", $user);
-		$this->assertObjectHasAttribute("_id",$user);
-		$this->assertObjectHasAttribute("roles",$user);
-		$this->assertInternalType("array", $user->roles);
-		$this->assertEquals(1,count($user->roles));
-		$this->assertEquals("cowboy",reset($user->roles));
-		$adm->addRoleToUser("joe","trainstopper");
-		$user = $adm->getUser("joe");
-		$this->assertInternalType("object", $user);
-		$this->assertObjectHasAttribute("_id",$user);
-		$this->assertObjectHasAttribute("roles",$user);
-		$this->assertInternalType("array", $user->roles);
-		$this->assertEquals(2,count($user->roles));
-		$this->assertEquals("cowboy",reset($user->roles));
-		$this->assertEquals("trainstopper",end($user->roles));
-		$adm->removeRoleFromUser($user,"cowboy");
-		$user = $adm->getUser("joe");
-		$this->assertInternalType("object", $user);
-		$this->assertObjectHasAttribute("_id",$user);
-		$this->assertObjectHasAttribute("roles",$user);
-		$this->assertInternalType("array", $user->roles);
-		$this->assertEquals(1,count($user->roles));
-		$this->assertEquals("trainstopper",reset($user->roles));
-		$adm->removeRoleFromUser("joe","trainstopper");
-		$user = $adm->getUser("joe");
-		$this->assertInternalType("object", $user);
-		$this->assertObjectHasAttribute("_id",$user);
-		$this->assertObjectHasAttribute("roles",$user);
-		$this->assertInternalType("array", $user->roles);
-		$this->assertEquals(0,count($user->roles));
+		// create an admin user which will be "gabage collected" in tearDown()
+		$this->_createInitialAdminUser();
+
+		$authorizedAdmin = new couchAdmin($this->adminClient);
+
+		// the database is needed for the test
+		$this->adminClient->createDatabase();
+
+		//create user Joe
+		$authorizedAdmin->createUser('joe', 'joes_password');
+		$userJoeAtBeginning = $authorizedAdmin->getUser("joe");
+
+		//add one role
+		$oUser = clone $userJoeAtBeginning;
+		$authorizedAdmin->addRoleToUser($oUser,"cowboy");
+		$userJoeWithOneRole = $authorizedAdmin->getUser("joe");
+
+		//add second role
+		$authorizedAdmin->addRoleToUser("joe","trainstopper");
+		$userJoeWithTwoRoles = $authorizedAdmin->getUser("joe");
+
+		//remove first role again
+		$oUser = clone $userJoeWithTwoRoles;
+		$authorizedAdmin->removeRoleFromUser($oUser,"cowboy");
+		$userJoeWithOneRoleLeft = $authorizedAdmin->getUser("joe");
+
+		//remove second role (so no roles left)
+		$authorizedAdmin->removeRoleFromUser("joe","trainstopper");
+		$userJoeWithNoRoleLeft = $authorizedAdmin->getUser("joe");
+
+		//remove user joe
+		$authorizedAdmin->deleteUser('joe');
+
+		//we don't need the database anymore
+		$this->adminClient->deleteDatabase();
+
+		// check joe after creation
+		$this->assertInternalType("object", $userJoeAtBeginning);
+		$this->assertObjectHasAttribute("_id",$userJoeAtBeginning);
+		$this->assertObjectHasAttribute("roles",$userJoeAtBeginning);
+		$this->assertInternalType("array", $userJoeAtBeginning->roles);
+		$this->assertEquals(0,count($userJoeAtBeginning->roles));
+
+		// check joe after first role added
+		$this->assertInternalType("object", $userJoeWithOneRole);
+		$this->assertObjectHasAttribute("_id",$userJoeWithOneRole);
+		$this->assertObjectHasAttribute("roles",$userJoeWithOneRole);
+		$this->assertInternalType("array", $userJoeWithOneRole->roles);
+		$this->assertEquals(1,count($userJoeWithOneRole->roles));
+		$this->assertEquals("cowboy",reset($userJoeWithOneRole->roles));
+
+		// check joe after second role added
+		$this->assertInternalType("object", $userJoeWithTwoRoles);
+		$this->assertObjectHasAttribute("_id",$userJoeWithTwoRoles);
+		$this->assertObjectHasAttribute("roles",$userJoeWithTwoRoles);
+		$this->assertInternalType("array", $userJoeWithTwoRoles->roles);
+		$this->assertEquals(2,count($userJoeWithTwoRoles->roles));
+		$this->assertEquals("cowboy",reset($userJoeWithTwoRoles->roles));
+		$this->assertEquals("trainstopper",end($userJoeWithTwoRoles->roles));
+
+		// check joe after first role removed
+		$this->assertInternalType("object", $userJoeWithOneRoleLeft);
+		$this->assertObjectHasAttribute("_id",$userJoeWithOneRoleLeft);
+		$this->assertObjectHasAttribute("roles",$userJoeWithOneRoleLeft);
+		$this->assertInternalType("array", $userJoeWithOneRoleLeft->roles);
+		$this->assertEquals(1,count($userJoeWithOneRoleLeft->roles));
+		$this->assertEquals("trainstopper",reset($userJoeWithOneRoleLeft->roles));
+
+		// check joe after second role removed
+		$this->assertInternalType("object", $userJoeWithNoRoleLeft);
+		$this->assertObjectHasAttribute("_id",$userJoeWithNoRoleLeft);
+		$this->assertObjectHasAttribute("roles",$userJoeWithNoRoleLeft);
+		$this->assertInternalType("array", $userJoeWithNoRoleLeft->roles);
+		$this->assertEquals(0,count($userJoeWithNoRoleLeft->roles));
+
 	}
 
 	/**
